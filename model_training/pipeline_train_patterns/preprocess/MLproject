@@ -1,0 +1,17 @@
+name: cifar10_initial
+
+docker_env:
+  image: tjems6498/ml-system-in-actions:training_pattern_cifar10_0.0.1
+  volumes: ["$(pwd)/data:/opt/data", "/Users/hong-eunpyo/Desktop/MLOps-DP/model_training/pipeline_train_patterns/mlruns:/tmp/mlruns"]
+
+entry_points:
+  preprocess:
+    parameters:
+      data: {type: string, default: cifar10}
+      downstream: {type: string, default: /opt/data/preprocess/}
+      cached_data_id: {type: string, default: ""}
+    command: |
+      python -m src.preprocess \
+        --data {data} \
+        --downstream {downstream} \
+        --cached_data_id {cached_data_id}
