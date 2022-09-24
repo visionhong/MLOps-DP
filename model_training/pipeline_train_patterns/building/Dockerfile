@@ -16,3 +16,4 @@ WORKDIR /onnxruntime/server/
 COPY ./${entrypoint_path} ./onnx_runtime_server_entrypoint.sh
 RUN chmod +x onnx_runtime_server_entrypoint.sh
 ENTRYPOINT ["./onnx_runtime_server_entrypoint.sh"]
+
