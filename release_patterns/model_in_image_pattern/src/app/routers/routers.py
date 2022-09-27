@@ -39,12 +39,12 @@ def predict_test_label() -> Dict[str, str]:
     return {'predictiom': prediction}
 
 # 입력 데이터를 predict
-@router.get('/predict')
+@router.post('/predict')
 def predict(data: Data) -> Dict[str, List[float]]:
     prediction = classifier.predict(data=data.data)
     return {'prediction': list(prediction)}
 
-@router.get('/predict/label')
+@router.post('/predict/label')
 def predict_label(data:Data) -> Dict[str, str]:
     prediction = classifier.predict_label(data=data.data)
-    return {'predictiom': prediction}
+    return {'prediction': prediction}

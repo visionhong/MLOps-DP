@@ -1,7 +1,6 @@
 import json
 from logging import getLogger
-from msilib.schema import Class
-from typing import Dict, List, Sequence
+from typing import Dict, List
 
 import numpy as np
 import onnxruntime as rt
