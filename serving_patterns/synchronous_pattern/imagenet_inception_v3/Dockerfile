@@ -16,7 +16,6 @@ COPY ./${SERVER_DIR}/image_net_labels.json /${PROJECT_DIR}/image_net_labels.json
 
 RUN python -m extract_inception_v3.py
 
-
 FROM tensorflow/serving:2.5.2
 
 ARG SERVER_DIR=imagenet_inception_v3
