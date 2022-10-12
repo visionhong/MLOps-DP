@@ -7,14 +7,16 @@ ADD ./${SERVER_DIR}/requirements.txt /${PROJECT_DIR}/
 
 RUN apt-get -y update && \
     apt-get -y install apt-utils gcc && \
-    apt-get clean && \  # /var/cache/apt/archives 디렉토리에 다운로드한 파일을 삭제해서 공간확보 \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --no-cache-dir -r requirements.txt
+# apt-get clean: /var/cache/apt/archives 디렉토리에 다운로드한 파일을 삭제해서 공간확보
 
 COPY ./${SERVER_DIR}/extract_inception_v3.py /${PROJECT_DIR}/extract_inception_v3.py
 COPY ./${SERVER_DIR}/image_net_labels.json /${PROJECT_DIR}/image_net_labels.json
 
-RUN python -m extract_inception_v3.py
+RUN python -m extract_inception_v3
+
 
 FROM tensorflow/serving:2.5.2
 

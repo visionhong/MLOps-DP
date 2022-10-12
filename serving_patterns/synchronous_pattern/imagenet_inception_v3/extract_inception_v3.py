@@ -4,7 +4,6 @@ from typing import List
 import tensorflow as tf
 import tensorflow_hub as hub
 
-
 def get_label(json_path: str = "./image_net_labels.json") -> List[str]:
     with open(json_path, 'r') as f:
         labels = json.load(f)
@@ -58,17 +57,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
