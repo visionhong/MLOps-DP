@@ -9,6 +9,7 @@ RUN apt-get -y update && \
     apt-get -y install apt-utils gcc && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
+    pip install tensorflow --use-feature=2020-resolver \
     pip install --no-cache-dir -r requirements.txt
 # apt-get clean: /var/cache/apt/archives 디렉토리에 다운로드한 파일을 삭제해서 공간확보
 

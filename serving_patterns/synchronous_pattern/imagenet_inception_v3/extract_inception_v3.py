@@ -10,7 +10,7 @@ def get_label(json_path: str = "./image_net_labels.json") -> List[str]:
     return labels
 
 def load_hub_model() -> tf.keras.Model:
-    model = tf.keras.Sequential([hub.KerasLayer("https://tfhub.dev/google/imagenet/inception_v3/classificaion/4")])
+    model = tf.keras.Sequential([hub.KerasLayer("https://tfhub.dev/google/imagenet/inception_v3/classification/4")])
     model.build([None, 299, 299, 3])
     return model
 
