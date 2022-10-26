@@ -37,5 +37,3 @@ def label() -> Dict[int, str]:
     return ModelConfigurations.labels
 
 
-@router.get("/predict/test")
-def predict_test(background_tasks)
