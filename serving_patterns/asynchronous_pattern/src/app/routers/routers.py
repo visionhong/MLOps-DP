@@ -37,3 +37,61 @@ def label() -> Dict[int, str]:
     return ModelConfigurations.labels
 
 
+@router.get('/predict/test')
+def predict_test(background_tasks: BackgroundTasks) -> Dict[str, str]:
+    job_id = str(uuid.uuid4())[:6]
+    data = Data()
+    data.image_data = ModelConfigurations.sample_image
+    background_job.save_data_job(data.image_data, job_id, background_tasks, True)
+    return {'job_id': job_id}
+
+
+# 이미지를 redis에 새로 등록 -> 추론은 background에서 이미 loop를 돌면서 추론중
+@router.get('/predict')
+def predict(data: Data, background_tasks: BackgroundTasks) -> Dict[str, str]:
+    image = base64.b64decode(str(data.image_data))
+    io_bytes = io.BytesIO(image)
+    data.image_data = Image.open(io_bytes)
+    job_id = str(uuid.uuid4())[:6]
+    background_job.save_data_job(
+        data=data.image_data,
+        job_id=job_id,
+        background_tasks=background_tasks,
+        enqueue=True
+    )
+    return {'job_id': job_id}
+
+
+# 해당 job의 결과값 get
+@router.get("/job/{job_id}")
+def prediction_result(job_id: str) -> Dict[str, Dict[str, str]]:
+    result = {job_id: {'prediction': ""}}
+    data = store_data_job.get_data_redis(job_id)
+    result[job_id]["prediction"] = data
+    return result
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
