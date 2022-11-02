@@ -10,6 +10,7 @@ COPY ./${SERVER_DIR}/data/image_net_labels.json /${PROJECT_DIR}/data/image_net_l
 
 RUN apt-get -y update && \
     apt-get -y install apt-utils gcc && \
+    pip install tensorflow==2.5.1 --use-feature=2020-resolver \
     pip install  --no-cache-dir -r requirements.txt && \
     touch __init__.py && \
     python -m extract_inception_v3

@@ -1,10 +1,8 @@
 import base64
 import io
-import json
 import logging
 from typing import Any, Dict
 
-import numpy as np
 from PIL import Image
 from src.app.backend.redis_client import redis_client
 
