@@ -1,13 +1,16 @@
 import json
-from typing import  List
+from typing import Dict, List
 
 import tensorflow as tf
 import tensorflow_hub as hub
+from tensorflow import keras
+
 
 def get_label(json_path: str = "./data/image_net_labels.json") -> List[str]:
-    with open(json_path, 'r') as f:
+    with open(json_path, "r") as f:
         labels = json.load(f)
     return labels
+
 
 def load_hub_model() -> tf.keras.Model:
     model = tf.keras.Sequential([hub.KerasLayer("https://tfhub.dev/google/imagenet/inception_v3/classification/4")])
@@ -17,12 +20,12 @@ def load_hub_model() -> tf.keras.Model:
 
 class InceptionV3Model(tf.keras.Model):
     def __init__(self, model: tf.keras.Model, labels: List[str]):
-        super(InceptionV3Model, self).__init__()
+        super().__init__(self)
         self.model = model
         self.labels = labels
 
     @tf.function(input_signature=[tf.TensorSpec(shape=[None], dtype=tf.string, name="image")])
-    def serving_fn(self, input_img=str) -> tf.Tensor:
+    def serving_fn(self, input_img: str) -> tf.Tensor:
         def _base64_to_array(img):
             img = tf.io.decode_base64(img)
             img = tf.io.decode_jpeg(img)
@@ -43,9 +46,10 @@ class InceptionV3Model(tf.keras.Model):
         return tf.map_fn(_convert_to_label, predictions, dtype=tf.string)
 
     def save(self, export_path="./saved_model/inception_v3/"):
-        signatures = {'serving_default': self.serving_fn}
+        signatures = {"serving_default": self.serving_fn}
         tf.keras.backend.set_learning_phase(0)
         tf.saved_model.save(self, export_path, signatures=signatures)
+
 
 def main():
     labels = get_label(json_path="./data/image_net_labels.json")
@@ -55,11 +59,5 @@ def main():
     inception_v3_model.save(export_path=f"./saved_model/inception_v3/{version_number}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
-
-
-
-
-
-
