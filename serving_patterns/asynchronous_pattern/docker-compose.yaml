@@ -3,14 +3,14 @@ version: "3"
 services:
   asynchronous_proxy:
     container_name: asynchronous_proxy
-    image: tjems6498/ml-system-in-actions:asynchronous_pattern_asynchronous_proxy_0.0.1
+    image: shibui/ml-system-in-actions:asynchronous_pattern_asynchronous_proxy_0.0.1
     restart: always
     environment:
       - PLATFORM=docker_compose
-      - QUEUE_NAME:tfs_queue
+      - QUEUE_NAME=tfs_queue
       - API_ADDRESS=imagenet_inception_v3
     ports:
-      - "8000:8000"
+      - "8400:8000"
     command: ./run.sh
     depends_on:
       - redis
@@ -19,7 +19,7 @@ services:
 
   imagenet_inception_v3:
     container_name: imagenet_inception_v3
-    image: tjems6498/ml-system-in-actions:asynchronous_pattern_imagenet_inception_v3_0.0.1
+    image: shibui/ml-system-in-actions:asynchronous_pattern_imagenet_inception_v3_0.0.1
     restart: always
     environment:
       - PORT=8500
@@ -31,7 +31,7 @@ services:
 
   asynchronous_backend:
     container_name: asynchronous_backend
-    image: tjems6498/ml-system-in-actions:asynchronous_pattern_asynchronous_backend_0.0.1
+    image: shibui/ml-system-in-actions:asynchronous_pattern_asynchronous_backend_0.0.1
     restart: always
     environment:
       - PLATFORM=docker_compose
