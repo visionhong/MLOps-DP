@@ -13,6 +13,7 @@ BATCH_PATTERN_PORT := 8000
 .PHONY: build_api
 build_api:
 	docker build \
+	    --network=host \
 		-t $(DOCKER_REPOSITORY):$(BATCH_PATTERN)_api_$(IMAGE_VERSION) \
 		-f $(DOCKERFILE).api \
 		.
@@ -28,6 +29,7 @@ push_api:
 .PHONY: build_batch
 build_batch:
 	docker build \
+	    --network=host \
 		-t $(DOCKER_REPOSITORY):$(BATCH_PATTERN)_batch_$(IMAGE_VERSION) \
 		-f $(DOCKERFILE).batch \
 		.
