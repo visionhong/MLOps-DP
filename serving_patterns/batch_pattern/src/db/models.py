@@ -1,6 +1,6 @@
 from logging import getLogger
 
-from sqlalchemy import Boolean, Column, Integer
+from sqlalchemy import Column, Integer
 from sqlalchemy.dialects.mysql import TIMESTAMP
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.functions import current_timestamp
@@ -9,7 +9,6 @@ from sqlalchemy.types import JSON
 logger = getLogger(__name__)
 
 from src.db.database import Base
-
 
 class Item(Base):
     __tablename__ = "items"
@@ -37,7 +36,6 @@ class Item(Base):
         server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
         nullable=False,
     )
-
 
 def create_tables(engine, checkfirst: bool = True):
     logger.info("Initialize table")

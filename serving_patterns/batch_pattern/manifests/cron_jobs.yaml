@@ -4,7 +4,7 @@ metadata:
   name: batch-job
   namespace: batch
 spec:
-  schedule: "0 * * * *"
+  schedule: "13 * * * *"
   jobTemplate:
     spec:
       template:
