@@ -14,6 +14,7 @@ strhd = StreamHandler()
 strhd.setFormatter(Formatter("%(asctime)s %(levelname)8s %(message)s"))
 logger.addHandler(strhd)
 
+# 추론
 def predict(item: schemas.Item) -> Tuple[int, np.ndarray]:
     prediction = classifier.predict(data=[item.values])
     logger.debug(f"prediction log: {item.id} {item.values} {prediction}")
@@ -28,9 +29,10 @@ def main():
         logger.info(f"predict data size: {len(data)}")
         predictions = {}
         with ThreadPoolExecutor(4) as executor:
-            results = executor.map(predict, data)
+            results = executor.map(predict, data)  # 추론을 실행해서 결과 취득
         for result in results:
-            predictions[result[0]] = list(result[1])
+            predictions[result[0]] = list(result[1])  # {item.id: prediction}
+        # 결과를 DB에 등록
         cruds.register_predictions(
             db=db,
             predictions=predictions,

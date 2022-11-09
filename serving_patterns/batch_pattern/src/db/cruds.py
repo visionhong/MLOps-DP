@@ -28,12 +28,12 @@ def register_item(db: Session, item: schemas.ItemBase, commit: bool = True):
         db.commit()
         db.refresh(_item)
 
-
+# 하나 이상의 데이터를 등록
 def register_items(db: Session, items: List[schemas.ItemBase], commit: bool = True):
     for item in items:
         register_item(db=db, item=item, commit=commit)
 
-
+# 추론 결과를 등록
 def register_predictions(db: Session, predictions: Dict[int, Dict[str, float]], commit: bool = True):
     for id, prediction in predictions.items():
         item = select_by_id(db=db, id=id)
