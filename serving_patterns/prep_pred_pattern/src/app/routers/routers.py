@@ -41,4 +41,19 @@ def predict_test_label() -> Dict[str, str]:
     prediction = classifier.predict_label(data=Data().data)
     return {"prediction": prediction}
 
+@router.post("/predict")
+def predict(data: Data) -> Dict[str, List[float]]:
+    image = base64.b64decode(str(data.data))
+    io_bytes = io.BytesIO(image)
+    image_data = Image.open(io_bytes)
+    prediction = classifier.predict(data=image_data)
+    return {"prediction": list(prediction)}
 
+
+@router.post("/predict/label")
+def predict_label(data: Data) -> Dict[str, str]:
+    image = base64.b64decode(str(data.data))
+    io_bytes = io.BytesIO(image)
+    image_data = Image.open(io_bytes)
+    prediction = classifier.predict_label(data=image_data)
+    return {"prediction": prediction}
