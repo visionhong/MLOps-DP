@@ -12,7 +12,7 @@ COPY ./data/cat.jpg /${PROJECT_DIR}/data/cat.jpg
 COPY ./data/image_net_labels.json /${PROJECT_DIR}/data/image_net_labels.json
 
 RUN apt-get -y update && \
-    apt-get -y install apt-utils gcc && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install apt-utils gcc && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --no-cache-dir -r requirements.txt && \
