@@ -9,7 +9,7 @@ services:
       - PLATFORM=docker_compose
       - API_ADDRESS=pred
     ports:
-      - "8000:8000"
+      - "8012:8000"
     command: ./run.sh
     depends_on:
       - pred
