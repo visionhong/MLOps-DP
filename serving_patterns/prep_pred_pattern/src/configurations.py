@@ -31,7 +31,7 @@ class APIConfigurations:
 class ModelConfigurations:
     api_address = os.getenv("API_ADDRESS", "localhost")
     grpc_port = int(os.getenv("GRPC_PORT", 50051))
-    rest_api_port = int(os.getenv("REST_API_PORT", 8001))
+    rest_api_port = int(os.getenv("REST_API_PORT", 8011))
     label_path = os.getenv("LABEL_PATH", "/prep_pred_pattern/data/image_net_labels.json")
 
     sample_image_path = os.getenv("SAMPLE_IMAGE_PATH", "/prep_pred_pattern/data/cat.jpg")
