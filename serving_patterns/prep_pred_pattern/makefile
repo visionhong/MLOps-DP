@@ -1,17 +1,28 @@
-DOCKER_REPOSITORY := tjems6498/ml-system-in-actions
+DOCKER_REPOSITORY := shibui/ml-system-in-actions
 
 ABSOLUTE_PATH := $(shell pwd)
 
 DOCKERFILE := Dockerfile
-DOCKER_COMPOSE := docker-compose.yaml
+DOCKER_COMPOSE := docker-compose.yml
 IMAGE_VERSION := 0.0.1
 
 PREP_PRED_PATTERN := prep_pred_pattern
 PREP_PRED_PATTERN_PREP := prep
-PREP_PRED_PATTERN_PREP_PORT := 8012
+PREP_PRED_PATTERN_PREP_PORT := 8011
 PREP_PRED_PATTERN_PRED := pred
-PREP_PRED_PATTERN_REST_PORT := 8011
+PREP_PRED_PATTERN_REST_PORT := 8012
 PREP_PRED_PATTERN_GRPC_PORT := 50051
+
+.PHONY: proto
+proto:
+	python \
+		-m grpc_tools.protoc \
+		-I src/proto \
+		--python_out=src/proto \
+		--grpc_python_out=src/proto \
+		src/proto/onnx-ml.proto \
+		src/proto/predict.proto \
+		src/proto/prediction_service.proto
 
 .PHONY: build_prep
 build_prep:
@@ -20,7 +31,7 @@ build_prep:
 		-f ./$(DOCKERFILE).prep .
 
 .PHONY: push_prep
-push_prep:
+push_prep: 
 	docker push $(DOCKER_REPOSITORY):$(PREP_PRED_PATTERN)_$(PREP_PRED_PATTERN_PREP)_$(IMAGE_VERSION)
 
 .PHONY: build_pred
@@ -53,3 +64,5 @@ c_down:
 	docker-compose \
 		-f ./$(DOCKER_COMPOSE) \
 		down
+
+

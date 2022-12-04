@@ -8,19 +8,23 @@ from src.constants import CONSTANTS, PLATFORM_ENUM
 
 logger = getLogger(__name__)
 
+
 class PlatformConfigurations:
     platform = os.getenv("PLATFORM", PLATFORM_ENUM.DOCKER.value)
     if not PLATFORM_ENUM.has_value(platform):
         raise ValueError(f"PLATFORM must be one of {[v.value for v in PLATFORM_ENUM.__members__.values()]}")
+
 
 class CacheConfigurations:
     cache_host = os.getenv("CACHE_HOST", "redis")
     cache_port = int(os.getenv("CACHE_PORT", 6379))
     queue_name = os.getenv("QUEUE_NAME", "queue")
 
+
 class RedisCacheConfigurations(CacheConfigurations):
     redis_db = int(os.getenv("REDIS_DB", 0))
     redis_decode_responses = bool(os.getenv("REDIS_DECODE_RESPONSES", True))
+
 
 class APIConfigurations:
     title = os.getenv("API_TITLE", "ServingPattern")
@@ -31,7 +35,7 @@ class APIConfigurations:
 class ModelConfigurations:
     api_address = os.getenv("API_ADDRESS", "localhost")
     grpc_port = int(os.getenv("GRPC_PORT", 50051))
-    rest_api_port = int(os.getenv("REST_API_PORT", 8011))
+    rest_api_port = int(os.getenv("REST_API_PORT", 8012))
     label_path = os.getenv("LABEL_PATH", "/prep_pred_pattern/data/image_net_labels.json")
 
     sample_image_path = os.getenv("SAMPLE_IMAGE_PATH", "/prep_pred_pattern/data/cat.jpg")
