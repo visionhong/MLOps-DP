@@ -3,7 +3,7 @@ version: "3"
 services:
   prep:
     container_name: prep
-    image: shibui/ml-system-in-actions:prep_pred_pattern_prep_0.0.1
+    image: tjems6498/ml-system-in-actions:prep_pred_pattern_prep_0.0.1
     restart: always
     environment:
       - PLATFORM=docker_compose
@@ -16,7 +16,7 @@ services:
 
   pred:
     container_name: pred
-    image: shibui/ml-system-in-actions:prep_pred_pattern_pred_0.0.1
+    image: tjems6498/ml-system-in-actions:prep_pred_pattern_pred_0.0.1
     restart: always
     environment:
       - HTTP_PORT=8001
