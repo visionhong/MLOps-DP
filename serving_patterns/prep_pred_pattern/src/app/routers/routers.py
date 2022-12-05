@@ -32,7 +32,7 @@ def metadata() -> Dict[str, Any]:
 def label() -> Dict[int, str]:
     return classifier.label
 
-
+# 샘풀 데이터로 추론
 @router.get("/predict/test")
 def predict_test() -> Dict[str, List[float]]:
     prediction = classifier.predict(data=Data().data)
@@ -44,7 +44,7 @@ def predict_test_label() -> Dict[str, str]:
     prediction = classifier.predict_label(data=Data().data)
     return {"prediction": prediction}
 
-
+# 입력 데이터로 추론
 @router.post("/predict")
 def predict(data: Data) -> Dict[str, List[float]]:
     image = base64.b64decode(str(data.data))

@@ -46,7 +46,7 @@ class Classifier(object):
         self.load_model()
         self.load_label()
 
-    def load_model(self):
+    def load_model(self):  # pkl로 저장해두었던 전처리 관련 sklearn 클래스 load
         logger.info(f"load preprocess in {self.preprocess_transformer_path}")
         self.preprocess_transformer = joblib.load(self.preprocess_transformer_path)
         logger.info(f"initialized preprocess")
@@ -74,7 +74,7 @@ class Classifier(object):
         request_message.inputs[self.onnx_input_name].dims.extend(preprocessed.shape)
         request_message.inputs[self.onnx_input_name].raw_data = input_tensor.raw_data
 
-        response = self.stub.Predict(request_message)
+        response = self.stub.Predict(request_message)  # gRPC로 추론서버에 추론요청
         output = np.frombuffer(response.outputs[self.onnx_output_name].raw_data, dtype=np.float32)
 
         softmax = self.softmax_transformer.transform(output).tolist()
@@ -92,7 +92,7 @@ classifier = Classifier(
     preprocess_transformer_path=ModelConfigurations().preprocess_transformer_path,
     softmax_transformer_path=ModelConfigurations().softmax_transformer_path,
     label_path=ModelConfigurations().label_path,
-    serving_address=f"{ModelConfigurations.api_address}:{ModelConfigurations.grpc_port}",
+    serving_address=f"{ModelConfigurations.api_address}:{ModelConfigurations.grpc_port}",  # 추론서버 uri
     onnx_input_name=ModelConfigurations().onnx_input_name,
     onnx_output_name=ModelConfigurations().onnx_output_name,
 )

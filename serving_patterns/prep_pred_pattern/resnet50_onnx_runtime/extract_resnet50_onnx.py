@@ -38,7 +38,7 @@ def main(pred: bool, prep: bool):
     postprocess_filename = f"softmax_transformer.pkl"
     postprocess_filepath = os.path.join(model_directory, postprocess_filename)
 
-    if pred:
+    if pred:  # 예측을 위해 미리 PyTorch 모델을 ONNX 형식으로 변환
         model = resnet50(pretrained=True)
         x_dummy = torch.rand((1, 3, 224, 224), device="cpu")
         model.eval()
@@ -54,14 +54,14 @@ def main(pred: bool, prep: bool):
             verbose=False,
         )
 
-    if prep:
+    if prep:  # 전처리 클래스를 pkl로 dump
         preprocess = PytorchImagePreprocessTransformer()
         dump_sklearn(preprocess, preprocess_filepath)
 
         postprocess = SoftmaxTransformer()
         dump_sklearn(postprocess, postprocess_filepath)
 
-    if prep and pred:
+    if prep and pred:  # sample 이미지로 onnxruntime inference 수행
         image = Image.open("./data/cat.jpg")
         np_image = preprocess.transform(image)
         print(np_image.shape)
