@@ -28,7 +28,7 @@ services:
       - PORT=8000
       - MODE=setosa
     ports:
-      - "8000:8000"
+      - "8005:8000"
     command: ./run.sh
 
   service_versicolor:
@@ -40,7 +40,7 @@ services:
       - PORT=8001
       - MODE=versicolor
     ports:
-      - "8001:8001"
+      - "8006:8001"
     command: ./run.sh
 
   service_virginica:
@@ -52,5 +52,5 @@ services:
       - PORT=8002
       - MODE=virginica
     ports:
-      - "8002:8002"
+      - "8007:8002"
     command: ./run.sh
