@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import os
 import uuid
 from typing import Any, Dict, List
 
@@ -36,38 +35,106 @@ def metadata() -> Dict[str, Any]:
         },
     }
 
+# 전 추론기에 대한 health check
 @router.get("/health/all")
 async def health_all() -> Dict[str, Any]:
     logger.info(f"GET redirect to: /health")
     results = {}
     async with httpx.AsyncClient() as ac:
         async def req(ac, service, url):
-            response = await ac.get(f"{url}/health")
+            response = await ac.get(f"{url}/health")  # url : 추론기의 엔드포인트
             return service, response
 
-        # 각 추론기의 health check
         tasks = [req(ac, service, url) for service, url in ServiceConfigurations.services.items()]
 
+        responses = await asyncio.gather(*tasks)
+
+        for service, response in responses:
+            results[service] = response.json()
+    return results
 
 
+@router.get("/predict/get/test")
+async def predict_get_test() -> Dict[str, Any]:
+    job_id = str(uuid.uuid4())[:6]
+    logger.info(f"TEST GET redirect to: /predict/test as {job_id}")
+    results = {}
+    async with httpx.AsyncClient() as ac:
+        async def req(ac, service, url, job_id):
+            response = await ac.get(f"{url}/predict/test", params={"id": job_id})
+            return service, response  # string, response
+
+        tasks = [req(ac, service, url, job_id) for service, url in ServiceConfigurations.services.item()]
+
+        responses = await asyncio.gather(*tasks)
+
+        for service, response in responses:
+            logger.info(f"{service} {job_id} {response.json()}")
+            results[service] = response.json()
+    return results
 
 
+@router.post("/predict/post/test")
+async def predict_post_test() -> Dict[str, Any]:
+    job_id = str(uuid.uuid4())[:6]
+    logger.info(f"TEST POST redirect to: /predict as {job_id}")
+    results = {}
 
+    async with httpx.AsyncClient() as ac:
+        async def req(ac, service, url, job_id):
+            response = await ac.post(f"{url}/predict", json={"data": Data().data}, params={"id": job_id})
+            return service, response
 
+        tasks = [req(ac, service, url, job_id) for service, url in ServiceConfigurations.services.items()]
 
+        responses = await asyncio.gather(*tasks)
 
+        for service, response in responses:
+            logger.info(f"{service} {job_id} {response.json()}")
+            results[service] = response.json()
+    return results
 
+# 전 추론기에 요청
+@router.post("/predict")
+async def predict(data: Data) -> Dict[str, Any]:
+    job_id = str(uuid.uuid4())[:6]
+    logger.info(f"POST redirect to: /predict as {job_id}")
+    results = {}
+    async with httpx.AsyncClient() as ac:
 
+        async def req(ac, service, url, job_id, data):
+            response = await ac.post(f"{url}/predict", json={"data": data.data}, params={"id": job_id})
+            return service, response
 
+        tasks = [req(ac, service, url, job_id, data) for service, url in ServiceConfigurations.services.items()]
 
+        responses = await asyncio.gather(*tasks)
 
+        for service, response in responses:
+            logger.info(f"{service} {job_id} {response.json()}")
+            results[service] = response.json()
+    return results
 
+# 전 추론기에 요청하고, 추론결과를 집약
+# 가장 확률이 높은 결과를 클라이언트에게 응답
+@router.post("/predict/label")
+async def predict_label(data: Data) -> Dict[str, Any]:
+    job_id = str(uuid.uuid4())[:6]
+    logger.info(f"POST redirect to: /predict as {job_id}")
+    results = {"prediction": {"proba": -1.0, "label": None}}
+    async with httpx.AsyncClient() as ac:
 
+        async def req(ac, service, url, job_id, data):
+            response = await ac.post(f"{url}/predict", json={"data": data.data}, params={"id": job_id})
+            return service, response
 
+        tasks = [req(ac, service, url, job_id, data) for service, url in ServiceConfigurations.services.items()]
 
+        responses = await asyncio.gather(*tasks)
 
-
-
-
-
-
+        for service, response in responses:
+            logger.info(f"{service} {job_id} {response.json()}")
+            proba = response.json()["prediction"][0]
+            if results["prediction"]["proba"] < proba:
+                results["prediction"] = {"proba": proba, "label": service}
+    return results
