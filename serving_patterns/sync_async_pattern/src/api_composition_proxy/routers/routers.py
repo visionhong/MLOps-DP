@@ -2,7 +2,6 @@ import asyncio
 import base64
 import io
 import logging
-import os
 import uuid
 from typing import Any, Dict
 
@@ -19,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-
+# MobileNetV2로의 GRPC 접속
 channel = grpc.insecure_channel(ServiceConfigurations.grpc_mobilenet_v2)
 stub = prediction_service_pb2_grpc.PredictionServiceStub(channel)
 
@@ -102,7 +101,7 @@ def predict_test(background_tasks: BackgroundTasks) -> Dict[str, Any]:
     )
     return results
 
-
+# 추론 요청
 @router.post("/predict")
 def predict(data: Data, background_tasks: BackgroundTasks) -> Dict[str, Any]:
     logger.info(f"POST redirect to: /predict")
@@ -114,6 +113,8 @@ def predict(data: Data, background_tasks: BackgroundTasks) -> Dict[str, Any]:
 
     image_data.save(bytes_io, format=image_data.format)
     bytes_io.seek(0)
+
+    # MobileNetV2에 동기적으로 요청
     r = request_tfserving.request_grpc(
         stub=stub,
         image=bytes_io.read(),
@@ -124,6 +125,7 @@ def predict(data: Data, background_tasks: BackgroundTasks) -> Dict[str, Any]:
     logger.info(f"prediction: {r}")
     results[ServiceConfigurations.mobilenet_v2] = r
 
+    # 백그라운드에서 돌고있는 redis에 이미지 저장
     background_job.save_data_job(
         data=image_data,
         job_id=job_id,
