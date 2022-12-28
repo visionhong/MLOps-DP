@@ -47,6 +47,7 @@ class Classifier(object):
         self.onnx_input_name: str = onnx_input_name
         self.onnx_output_name: str = onnx_output_name
 
+        # multi stage build에서 저장한 pkl 불러옴
         self.load_model()
         self.load_label()
 
@@ -70,8 +71,9 @@ class Classifier(object):
         data: Data,
         background_tasks: BackgroundTasks,
     ) -> List[float]:
-
-        cache_data = background_job.get_data_redis(key=data.data)  # 해당 key로 등록된 캐시가 있는지 확인
+        # 해당 key로 등록된 캐시가 있는지 확인
+        cache_data = background_job.get_data_redis(key=data.data)
+        # 해당 key가 검색이 되지 않는다면 추론실행
         if cache_data is None:
             logger.info(f"registering cache: {data.data}")
             image = Image.open(os.path.join("data/", f"{data.data}.jpg"))
@@ -86,13 +88,14 @@ class Classifier(object):
             request_message.inputs[self.onnx_input_name].data_type = input_tensor.data_type
             request_message.inputs[self.onnx_input_name].dims.extend(preprocessed.shape)
             request_message.inputs[self.onnx_input_name].raw_data = input_tensor.raw_data
-
+            # onnx runtime grpc inference
             response = self.stub.Predict(request_message)
             output = np.frombuffer(response.outputs[self.onnx_output_name].raw_data, dtype=np.float32)
 
             softmax = self.softmax_transformer.transform(output).tolist()
             # 추론 결과를 캐싱
             background_job.save_data_job(data=list(softmax), item_id=data.data, background_tasks=background_tasks)
+        # 해당 key가 검색 되었다면 value 활용
         else:
             logger.info(f"cache hit: {data.data}")
             softmax = list(cache_data)
